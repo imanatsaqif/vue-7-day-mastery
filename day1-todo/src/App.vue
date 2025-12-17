@@ -1,4 +1,4 @@
-  <script setup>
+<script setup>
   import { ref, reactive, computed } from "vue";
 
   // References and reactive state
@@ -30,13 +30,12 @@
 
 <template>
   <!-- Main container -->
-  <div class="w-full">
+  <div class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4">
     <!-- Card container -->
     <div
-      class="bg-white rounded-xl shadow
+      class="w-full max-w-3xl
+             bg-white rounded-xl shadow
              p-4 sm:p-6
-             max-w-full md:max-w-xl lg:max-w-3xl
-             mx-auto
              flex flex-col gap-y-4"
     >
       <h1 class="text-2xl font-semibold text-gray-800">
