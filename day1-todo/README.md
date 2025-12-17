@@ -1,3 +1,23 @@
+# Day 1: Vue.js Todo App
+
+## Live Demo
+[![Deploy with Vercel](https://vercel.com/button)](https://vue-day1-todo.vercel.app)
+
+**URL:** https://vue-day1-todo.vercel.app
+
+## What I Learned Today
+- Vue 3 Composition API: `ref()` vs `reactive()`
+- Directives: `v-model`, `v-for`, `v-if`, `@click`
+- Component structure & reactivity
+- Vercel deployment workflow
+
+## Features
+- Add todos (v-model)
+- Delete todos (@click)
+- Toggle complete state
+- Responsive Tailwind design
+- Live deployment
+
 # Key Learnings
 
 ## Differences from React
