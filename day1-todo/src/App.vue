@@ -1,47 +1,49 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import { ref, reactive } from "vue";
+
+  //method 1: primitive ref
+  const newTodo = ref("");
+  //method 2: reactive object
+  const todos = reactive([]);
+
+  const addTodo = () => {
+    if (newTodo.value.trim() !== "") {
+      todos.push({
+        id: Date.now(),
+        text: newTodo.value.trim(),
+        done: false,
+      });
+      newTodo.value = "";
+    }
+  };
+
+  const deleteTodo = (id) => {
+    const index = todos.findIndex((todo) => todo.id === id);
+    if (index !== -1) {
+      todos.splice(index, 1);
+    }
+  };
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="app-container">
+    <h1>Todo List</h1>
+    <div class="input-section">
+      <input
+        v-model="newTodo"
+        @keyup.enter="addTodo"
+        type="text"
+        placeholder="Add a new todo"
+      />
+      <button @click="addTodo">Add</button>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <ul class="todo-list">
+      <li v-for="todo in todos" :key="todo.id" :class="{ done: todo.done }">
+        <input type="checkbox" v-model="todo.done" />
+        <span>{{ todo.text }}</span>
+        <button @click="deleteTodo(todo.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
