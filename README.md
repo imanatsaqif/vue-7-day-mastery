@@ -1,2 +1,3 @@
-# vue-7-day-mastery
-Day 1: Todo App - Vue.js Fundamentals
+# Vue 7-Day Mastery
+
+## Day 1: Todo App - Vue.js Fundamentals
