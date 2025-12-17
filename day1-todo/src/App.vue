@@ -1,10 +1,10 @@
-<script setup>
-  import { ref, reactive } from "vue";
+  <script setup>
+  import { ref, reactive, computed } from "vue";
 
-  //method 1: primitive ref
   const newTodo = ref("");
-  //method 2: reactive object
   const todos = reactive([]);
+
+  const remaining = computed(() => todos.filter(t => !t.done).length);
 
   const addTodo = () => {
     if (newTodo.value.trim() !== "") {
@@ -18,32 +18,80 @@
   };
 
   const deleteTodo = (id) => {
-    const index = todos.findIndex((todo) => todo.id === id);
+    const index = todos.findIndex(todo => todo.id === id);
     if (index !== -1) {
       todos.splice(index, 1);
     }
   };
-
 </script>
 
 <template>
-  <div class="app-container">
-    <h1>Todo List</h1>
-    <div class="input-section">
-      <input
-        v-model="newTodo"
-        @keyup.enter="addTodo"
-        type="text"
-        placeholder="Add a new todo"
-      />
-      <button @click="addTodo">Add</button>
+  <div class="w-full">
+    <div
+      class="bg-white rounded-xl shadow
+             p-4 sm:p-6
+             max-w-full md:max-w-xl lg:max-w-3xl
+             mx-auto
+             flex flex-col gap-y-4"
+    >
+      <h1 class="text-2xl font-semibold text-gray-800">
+        Todo List
+      </h1>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input
+          v-model="newTodo"
+          @keyup.enter="addTodo"
+          type="text"
+          placeholder="Add a new todo"
+          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm
+                 text-gray-800 placeholder-gray-400
+                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button
+          @click="addTodo"
+          class="w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 text-sm
+                 text-white hover:bg-blue-700 transition"
+        >
+          Add
+        </button>
+      </div>
+
+      <ul v-if="todos.length" class="flex flex-col gap-2">
+        <li
+          v-for="todo in todos"
+          :key="todo.id"
+          class="flex items-center justify-between
+                 rounded-lg border px-3 py-3"
+        >
+          <div class="flex items-center gap-2">
+            <input type="checkbox" v-model="todo.done" class="h-4 w-4" />
+            <span
+              :class="todo.done ? 'line-through text-gray-400' : 'text-gray-700'"
+              class="text-sm"
+            >
+              {{ todo.text }}
+            </span>
+          </div>
+
+          <button
+            @click="deleteTodo(todo.id)"
+            class="text-sm text-red-500 hover:text-red-700 transition"
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+
+      <p v-else class="text-sm italic text-gray-400">
+        No todos yet. Add one above!
+      </p>
+
+      <p class="text-sm text-gray-600">
+        Remaining:
+        <span class="font-medium">{{ remaining }}</span>
+      </p>
     </div>
-    <ul class="todo-list">
-      <li v-for="todo in todos" :key="todo.id" :class="{ done: todo.done }">
-        <input type="checkbox" v-model="todo.done" />
-        <span>{{ todo.text }}</span>
-        <button @click="deleteTodo(todo.id)">Delete</button>
-      </li>
-    </ul>
   </div>
 </template>
