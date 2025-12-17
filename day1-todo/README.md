@@ -1,38 +1,61 @@
-# day1-todo
+# Key Learnings
 
-This template should help get you started developing with Vue 3 in Vite.
+## Differences from React
+1. **No JSX Needed**:
+   - Vue uses templates instead of JSX for defining the UI structure.
+   - Example:
 
-## Recommended IDE Setup
+     ```html
+     <template>
+       <div>{{ message }}</div>
+     </template>
+     ```
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+2. **`ref()` vs `useState()`**:
+   - `ref()` is used to create reactive primitive values in Vue.
+   - Access the value in the script using `.value`, but it is auto-unwrapped in the template.
+   - Example:
 
-## Recommended Browser Setup
+     ```javascript
+     import { ref } from 'vue';
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+     const count = ref(0);
+     console.log(count.value); // Access in script
+     ```
 
-## Customize configuration
+     ```html
+     <template>
+       <p>{{ count }}</p> <!-- Auto-unwrapped in template -->
+     </template>
+     ```
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+3. **`reactive()` for Objects**:
+   - Similar to `useState` in React, but specifically for objects.
+   - Example:
 
-## Project Setup
+     ```javascript
+     import { reactive } from 'vue';
 
-```sh
-npm install
-```
+     const state = reactive({ name: 'John', age: 30 });
+     state.name = 'Jane'; // Updates reactively
+     ```
 
-### Compile and Hot-Reload for Development
+4. **Directives vs No Directives in React**:
+   - Vue provides built-in directives (e.g., `v-if`, `v-for`, `v-bind`) to simplify common tasks.
+   - React does not have directives; you use JavaScript logic directly in JSX.
+   - Example of `v-if`:
 
-```sh
-npm run dev
-```
+     ```html
+     <template>
+       <p v-if="isVisible">Visible</p>
+     </template>
+     ```
 
-### Compile and Minify for Production
+     In React:
 
-```sh
-npm run build
-```
+     ```jsx
+     {isVisible && <p>Visible</p>}
+     ```
+
+  ##Screenshot Progress
+     <img width="589" height="277" alt="image" src="https://github.com/user-attachments/assets/add2679b-8f9f-4b84-b68f-62d2b50574c4" />
