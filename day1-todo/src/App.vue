@@ -1,11 +1,14 @@
   <script setup>
   import { ref, reactive, computed } from "vue";
 
-  const newTodo = ref("");
-  const todos = reactive([]);
+  // References and reactive state
+  const newTodo = ref(""); // current input value
+  const todos = reactive([]); // array of todo objects
 
+  // Computed property to count remaining todos
   const remaining = computed(() => todos.filter(t => !t.done).length);
 
+  // Functions to add and delete todos
   const addTodo = () => {
     if (newTodo.value.trim() !== "") {
       todos.push({
@@ -26,7 +29,9 @@
 </script>
 
 <template>
+  <!-- Main container -->
   <div class="w-full">
+    <!-- Card container -->
     <div
       class="bg-white rounded-xl shadow
              p-4 sm:p-6
@@ -37,7 +42,7 @@
       <h1 class="text-2xl font-semibold text-gray-800">
         Todo List
       </h1>
-
+      <!-- Input and Add button -->
       <div class="flex flex-col sm:flex-row gap-2">
         <input
           v-model="newTodo"
@@ -57,7 +62,7 @@
           Add
         </button>
       </div>
-
+      <!-- Todo list -->
       <ul v-if="todos.length" class="flex flex-col gap-2">
         <li
           v-for="todo in todos"
@@ -74,7 +79,7 @@
               {{ todo.text }}
             </span>
           </div>
-
+          <!-- Delete button -->
           <button
             @click="deleteTodo(todo.id)"
             class="text-sm text-red-500 hover:text-red-700 transition"
@@ -83,11 +88,11 @@
           </button>
         </li>
       </ul>
-
+      <!-- No todos message -->
       <p v-else class="text-sm italic text-gray-400">
         No todos yet. Add one above!
       </p>
-
+      <!-- Remaining todos count -->
       <p class="text-sm text-gray-600">
         Remaining:
         <span class="font-medium">{{ remaining }}</span>
