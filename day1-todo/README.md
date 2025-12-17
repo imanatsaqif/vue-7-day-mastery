@@ -77,6 +77,7 @@
      {isVisible && <p>Visible</p>}
      ```
 
-  ## Screenshot Progress
+  ## Screenshot Progress vs Finished Version
 
-  <img width="589" height="277" alt="image" src="https://github.com/user-attachments/assets/add2679b-8f9f-4b84-b68f-62d2b50574c4" />
+  <img width="589" height="277" alt="image" src="https://github.com/user-attachments/assets/add2679b-8f9f-4b84-b68f-62d2b50574c4" /> <img width="1861" height="884" alt="image" src="https://github.com/user-attachments/assets/ec930877-afdb-4854-9267-079c894a7118" />
+
