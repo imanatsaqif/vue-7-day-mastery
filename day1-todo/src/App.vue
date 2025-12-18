@@ -9,8 +9,9 @@ import TaskFilters from './components/TaskFilters.vue'
 const todos = reactive([]);
 const filter = ref('all');
 
-// Computed property to count remaining todos
+// Computed properties
 const remaining = computed(() => todos.filter(t => !t.done).length);
+const hasTasks = computed(() => todos.length > 0); // <-- Computed baru
 
 // Add, delete, toggle functions
 const addTodo = (text) => {
@@ -62,13 +63,16 @@ const filteredTodos = computed(() => {
       <TaskInput @add-task="addTodo" />
 
       <!-- Remaining count -->
-      <p class="text-sm text-gray-600">
+      <p v-if="hasTasks" class="text-sm text-gray-600">
         Remaining:
         <span class="font-medium">{{ remaining }}</span>
       </p>
 
       <!-- Filters -->
-      <TaskFilters v-model="filter" />
+      <TaskFilters 
+        v-if="hasTasks" 
+        v-model="filter" 
+      />
 
       <!-- Task list -->
       <TaskList 
@@ -76,9 +80,10 @@ const filteredTodos = computed(() => {
         @delete-task="deleteTodo"
         @toggle-task="toggleTodo"
       >
+        <!-- Empty state message tetap sederhana -->
         <template #empty>
           <p class="text-xl text-center py-8 text-gray-400">
-            {{ filter === 'completed' ? 'All tasks done!' : 'No tasks here!' }}
+            No tasks added yet
           </p>
         </template>
       </TaskList>
