@@ -1,3 +1,4 @@
+<!-- Task Item Component -->
 <template>
     <li class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-2">
         <input type="checkbox" :checked="todo.done" @change="toggleDone" class="w-5 h-5" />
