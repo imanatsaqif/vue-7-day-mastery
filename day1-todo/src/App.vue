@@ -1,3 +1,4 @@
+<!-- Main App-->
 <script setup>
 import { ref, reactive, computed } from "vue";
 import TaskInput from './components/TaskInput.vue'
