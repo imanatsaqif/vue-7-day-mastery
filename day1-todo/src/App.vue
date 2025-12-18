@@ -1,101 +1,92 @@
+<!-- Main App-->
 <script setup>
-  import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed } from "vue";
+import TaskInput from './components/TaskInput.vue'
+import TaskList from './components/TaskList.vue'
+import TaskFilters from './components/TaskFilters.vue'
 
-  // References and reactive state
-  const newTodo = ref(""); // current input value
-  const todos = reactive([]); // array of todo objects
+// Reactive state
+const todos = reactive([]);
+const filter = ref('all');
 
-  // Computed property to count remaining todos
-  const remaining = computed(() => todos.filter(t => !t.done).length);
+// Computed properties
+const remaining = computed(() => todos.filter(t => !t.done).length);
+const hasTasks = computed(() => todos.length > 0); // <-- Computed baru
 
-  // Functions to add and delete todos
-  const addTodo = () => {
-    if (newTodo.value.trim() !== "") {
-      todos.push({
-        id: Date.now(),
-        text: newTodo.value.trim(),
-        done: false,
-      });
-      newTodo.value = "";
-    }
-  };
+// Add, delete, toggle functions
+const addTodo = (text) => {
+  todos.push({
+    id: Date.now(),
+    text,
+    done: false,
+  });
+}
 
-  const deleteTodo = (id) => {
-    const index = todos.findIndex(todo => todo.id === id);
-    if (index !== -1) {
-      todos.splice(index, 1);
-    }
-  };
+const deleteTodo = (id) => {
+  const index = todos.findIndex(t => t.id === id);
+  if (index !== -1) {
+    todos.splice(index, 1);
+  }
+}
+
+const toggleTodo = (id) => {
+  const todo = todos.find(t => t.id === id);
+  if (todo) {
+    todo.done = !todo.done;
+  }
+}
+
+// Filtered todos
+const filteredTodos = computed(() => {
+  switch (filter.value) {
+    case 'active':
+      return todos.filter(t => !t.done)
+    case 'completed':
+      return todos.filter(t => t.done)
+    default:
+      return todos
+  }
+});
 </script>
 
 <template>
-  <!-- Main container -->
   <div class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4">
-    <!-- Card container -->
-    <div
-      class="w-full max-w-3xl
+    <div class="w-full max-w-3xl
              bg-white rounded-xl shadow
              p-4 sm:p-6
-             flex flex-col gap-y-4"
-    >
+             flex flex-col gap-y-4">
       <h1 class="text-2xl font-semibold text-gray-800">
         Todo List
       </h1>
-      <!-- Input and Add button -->
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input
-          v-model="newTodo"
-          @keyup.enter="addTodo"
-          type="text"
-          placeholder="Add a new todo"
-          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm
-                 text-gray-800 placeholder-gray-400
-                 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
 
-        <button
-          @click="addTodo"
-          class="w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 text-sm
-                 text-white hover:bg-blue-700 transition"
-        >
-          Add
-        </button>
-      </div>
-      <!-- Todo list -->
-      <ul v-if="todos.length" class="flex flex-col gap-2">
-        <li
-          v-for="todo in todos"
-          :key="todo.id"
-          class="flex items-center justify-between
-                 rounded-lg border px-3 py-3"
-        >
-          <div class="flex items-center gap-2">
-            <input type="checkbox" v-model="todo.done" class="h-4 w-4" />
-            <span
-              :class="todo.done ? 'line-through text-gray-400' : 'text-gray-700'"
-              class="text-sm"
-            >
-              {{ todo.text }}
-            </span>
-          </div>
-          <!-- Delete button -->
-          <button
-            @click="deleteTodo(todo.id)"
-            class="text-sm text-red-500 hover:text-red-700 transition"
-          >
-            Delete
-          </button>
-        </li>
-      </ul>
-      <!-- No todos message -->
-      <p v-else class="text-sm italic text-gray-400">
-        No todos yet. Add one above!
-      </p>
-      <!-- Remaining todos count -->
-      <p class="text-sm text-gray-600">
+      <!-- Input -->
+      <TaskInput @add-task="addTodo" />
+
+      <!-- Remaining count -->
+      <p v-if="hasTasks" class="text-sm text-gray-600">
         Remaining:
         <span class="font-medium">{{ remaining }}</span>
       </p>
+
+      <!-- Filters -->
+      <TaskFilters 
+        v-if="hasTasks" 
+        v-model="filter" 
+      />
+
+      <!-- Task list -->
+      <TaskList 
+        :todos="filteredTodos" 
+        @delete-task="deleteTodo"
+        @toggle-task="toggleTodo"
+      >
+        <!-- Empty state message tetap sederhana -->
+        <template #empty>
+          <p class="text-xl text-center py-8 text-gray-400">
+            No tasks added yet
+          </p>
+        </template>
+      </TaskList>
     </div>
   </div>
 </template>
