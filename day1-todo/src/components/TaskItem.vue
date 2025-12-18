@@ -2,7 +2,7 @@
 <template>
     <li class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg mb-2">
         <input type="checkbox" :checked="todo.done" @change="toggleDone" class="w-5 h-5" />
-        <span :class="{ 'line-through text-gray-400': todo.done, 'flex-1': true }">
+        <span :class="{ 'line-through text-gray-400': todo.done, 'flex-1': true, 'text-gray-800': !todo.done }">
             {{ todo.text }}
         </span>
         <button @click="emit('delete-task', todo.id)" class="
