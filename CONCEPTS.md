@@ -1,4 +1,6 @@
-### Vue.js Concepts
+## Vue.js Concepts
+
+### DAY 1
 
 #### Interpolation with `{{ }}`
 In Vue.js, `{{ }}` is used for data binding within the template. It allows you to display dynamic content directly in the HTML. For example:
@@ -61,3 +63,17 @@ Here, the `message` property from the Vue instance will be rendered inside the `
 
 - **Key Difference**:
   - Vue's `v-model` provides a simpler syntax for two-way binding, while React requires explicit state management with `value` and `onChange`.
+
+### Day 2: Component Architecture Plan
+
+#### Refactoring Strategy
+1. App.vue (parent) - state management only
+2. components/TaskInput.vue - v-model + emits
+3. components/TaskList.vue - props + slots
+4. components/TaskItem.vue - props + emits
+5. components/TaskFilters.vue - emits filter events
+
+#### Concepts to Implement
+- Props validation (like PropTypes)
+- Emits declaration (like callback props)
+- Scoped slots (advanced pattern)
