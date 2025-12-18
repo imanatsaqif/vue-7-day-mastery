@@ -1,24 +1,22 @@
+<!-- Main App -->
 <script setup>
   import { ref, reactive, computed } from "vue";
+  import TaskInput from './components/TaskInput.vue'
 
   // References and reactive state
-  const newTodo = ref(""); // current input value
   const todos = reactive([]); // array of todo objects
 
   // Computed property to count remaining todos
   const remaining = computed(() => todos.filter(t => !t.done).length);
 
   // Functions to add and delete todos
-  const addTodo = () => {
-    if (newTodo.value.trim() !== "") {
-      todos.push({
-        id: Date.now(),
-        text: newTodo.value.trim(),
-        done: false,
-      });
-      newTodo.value = "";
-    }
-  };
+  const addTodo = (text) => {
+    todos.push({
+      id: Date.now(),
+      text: text,
+      done: false,
+    });
+  }
 
   const deleteTodo = (id) => {
     const index = todos.findIndex(todo => todo.id === id);
@@ -42,25 +40,7 @@
         Todo List
       </h1>
       <!-- Input and Add button -->
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input
-          v-model="newTodo"
-          @keyup.enter="addTodo"
-          type="text"
-          placeholder="Add a new todo"
-          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm
-                 text-gray-800 placeholder-gray-400
-                 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-
-        <button
-          @click="addTodo"
-          class="w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 text-sm
-                 text-white hover:bg-blue-700 transition"
-        >
-          Add
-        </button>
-      </div>
+      <TaskInput @add-task="addTodo" />
       <!-- Todo list -->
       <ul v-if="todos.length" class="flex flex-col gap-2">
         <li
