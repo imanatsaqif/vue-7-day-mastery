@@ -11,11 +11,11 @@ const routes = [
     path: '/',
     component: MainLayout,
     children: [
-      { path: '', component: Home },
-      { path: 'about', component: About },
-      { path: 'projects', component: Projects },
-      { path: 'projects/:id', component: ProjectDetail },
-      { path: 'contact', component: Contact }
+      { path: '', name: 'home', component: Home },
+      { path: 'about', name: 'about', component: About },
+      { path: 'projects', name: 'projects', component: Projects },
+      { path: 'projects/:slug', name: 'project-detail', component: ProjectDetail },
+      { path: 'contact', name: 'contact', component: Contact }
     ]
   }
 ]
