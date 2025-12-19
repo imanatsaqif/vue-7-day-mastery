@@ -1,7 +1,7 @@
 # Live Demo
-[![Deploy with Vercel](https://vercel.com/button)](https://vue-day1-todo.vercel.app)
+[![Deploy with Vercel](https://vercel.com/button)](https://todo-vueproject.vercel.app)
 
-**URL:** https://vue-day1-todo.vercel.app
+**URL:** https://todo-vueproject.vercel.app
 ## Day 1: Vue.js Todo App
 
 ## What I Learned Today

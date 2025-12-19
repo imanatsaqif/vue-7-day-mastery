@@ -24,7 +24,7 @@ The app uses Vue Router for page navigation and structured local data to simulat
 - `/contact` - Contact form page
 
 ## Deployment
-Deployed on Vercel: 
+Deployed on Vercel: https://todo-vueproject.vercel.app
 
 ## Notes
 - Local data is structured for easy backend replacement.
