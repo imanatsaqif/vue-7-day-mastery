@@ -33,7 +33,7 @@ const project = computed(() => {
           <span 
             v-for="tech in project.tech" 
             :key="tech"
-            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full font-medium"
+            class="px-4 py-2 bg-linear-to-r from-blue-500 to-purple-600 text-white rounded-full font-medium"
           >
             {{ tech }}
           </span>
@@ -45,7 +45,7 @@ const project = computed(() => {
         <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Project Status</h2>
         <div class="flex items-center space-x-4">
           <span class="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">
-            {{ project.featured ? '⭐ Featured' : 'In Progress' }}
+            {{ project.isFeatured ? '⭐ Featured' : 'In Progress' }}
           </span>
           <span class="text-gray-600 dark:text-gray-400">
             {{ store.projects.length }} total projects in portfolio

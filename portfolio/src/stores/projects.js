@@ -14,7 +14,7 @@ export const useProjectsStore = defineStore("projects", () => {
     )
 
     const techStacks = computed(() => {
-        const allTech = projects.value.flatMap(p => p.technologies);
+        const allTech = projects.value.flatMap(p => p.tech);
         return [...new Set(allTech)]
     });
 
