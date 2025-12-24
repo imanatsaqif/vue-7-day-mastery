@@ -3,7 +3,4 @@
 </template>
 
 <script setup>
-  import { useThemeStore } from '../stores/theme.js'
-  const themeStore = useThemeStore()
-  console.log(themeStore.isDark)
 </script>
