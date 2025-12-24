@@ -11,6 +11,6 @@ export const projects = [
         title: 'Kasir Bapak',
         description: 'Web App Kasir Bapak untuk mendukung operasional klinik.',
         tech: ['React', 'Firebase', 'TypeScript'],
-        featured: false
+        featured: true
     }
 ];
