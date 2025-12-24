@@ -1,30 +1,41 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
   // State
-  const isDarkMode = ref(false)
+  const isDark = ref(false)
   
-  // Getters (computed)
-  const themeClass = computed(() => isDarkMode.value ? 'dark' : 'light')
-  const icon = computed(() => isDarkMode.value ? '🌙' : '☀️')
-  
-  // Actions
-  function toggleTheme() {
-    isDarkMode.value = !isDarkMode.value
-    // Persist to localStorage
-    localStorage.setItem('portfolio-theme', isDarkMode.value ? 'dark' : 'light')
-  }
-  
-  function initializeTheme() {
+  if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('portfolio-theme')
     if (saved) {
-      isDarkMode.value = saved === 'dark'
+      isDark.value = saved === 'dark'
     } else {
       // Check system preference
-      isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+      isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
     }
   }
   
-  return { isDarkMode, themeClass, icon, toggleTheme, initializeTheme }
+  // Getters (computed)
+  const themeClass = computed(() => isDark.value ? 'dark' : 'light')
+  const themeIcon = computed(() => isDark.value ? '🌙' : '☀️')
+  
+  // Actions
+  const toggleTheme = () => {
+    isDark.value = !isDark.value
+  }
+  
+  // Watch for changes to persist
+  watch(isDark, (newValue) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio-theme', newValue ? 'dark' : 'light')
+      document.documentElement.classList.toggle('dark', newValue)
+    }
+  }, { immediate: true })
+  
+  return {
+    isDark,
+    themeClass,
+    themeIcon,
+    toggleTheme
+  }
 })

@@ -1,13 +1,11 @@
 ## Day 4: Pinia Integration Plan
 
-### Goals
-1. Install & configure Pinia
-2. Create stores:
-   - useThemeStore (light/dark mode)
-   - useProjectsStore (centralized projects data)
-3. Integrate stores into portfolio components
+### Stores to Create:
+1. `useThemeStore` - Light/dark mode + persistence
+2. `useProjectsStore` - Centralized project data + methods
+3. `useAppStore` - Global UI state (loading, visitor count)
 
-### Concepts to Master
-- Store definition (state, getters, actions)
-- Store composition (multiple stores)
-- Persistence (localStorage for theme)
+### Refactor Targets:
+1. Move projects.js data to store
+2. Add theme toggle to MainLayout
+3. Add visitor counter to Home
