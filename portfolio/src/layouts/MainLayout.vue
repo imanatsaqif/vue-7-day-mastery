@@ -11,7 +11,7 @@ function toggleTheme() {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
         <nav class="bg-white dark:bg-gray-800 shadow-lg">
             <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="text-xl font-bold">
@@ -42,7 +42,7 @@ function toggleTheme() {
             </div>
         </nav>
 
-        <main class="container mx-auto px-4 py-8">
+        <main class="container mx-auto px-4 py-8 grow">
             <RouterView />
         </main>
 
