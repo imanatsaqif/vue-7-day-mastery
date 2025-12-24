@@ -1,5 +1,5 @@
 <script setup>
-import { useThemeStore } from '../stores/theme.js'
+import { useThemeStore } from '@/stores/theme'
 import { RouterLink } from 'vue-router'
 import { RouterView } from 'vue-router'
 

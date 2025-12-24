@@ -1,19 +1,8 @@
 <script setup>
 import { useProjectsStore } from '@/stores/projects'
 import { RouterLink } from 'vue-router'
-import { onMounted } from 'vue'
 
 const store = useProjectsStore()
-
-onMounted(() => {
-  console.log('Store projects:', store.projects)
-  console.log('Featured projects:', store.featuredProjects)
-  console.log('Is featured defined?', store.projects.map(p => ({
-    title: p.title,
-    featured: p.featured,
-    hasFeatured: 'featured' in p
-  })))
-})
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 // src/stores/projects.js
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { projects as initialProjects } from "../data/projects";
+import { projects as initialProjects } from "@/data/projects";
 
 export const useProjectsStore = defineStore("projects", () => {
     // State
