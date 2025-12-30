@@ -43,10 +43,8 @@ const routes = [
             return { name: 'projects' }
           }
 
-          const { useProjectsStore } = await import('@/stores/projects')
           const store = useProjectsStore()
           const project = store.getProjectBySlug(slug)
-
           if (!project) {
             return { name: 'projects' }
           }
@@ -71,22 +69,13 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  let title = to.meta?.title || ''
-
   if (to.name === 'project-detail') {
     const slug = to.params.slug
-    import('@/stores/projects').then(({ useProjectsStore }) => {
-      const store = useProjectsStore()
-      const project = store.getProjectBySlug(slug)
-      if (project) {
-        title = project.title
-        document.title = `${title} | Imana's Portfolio`
-      }
-    })
-  }
-
-  if (to.name !== 'project-detail') {
-    document.title = title ? `${title} | Imana's Portfolio` : "Imana's Portfolio"
+    const store = useProjectsStore()  // Langsung pakai
+    const project = store.getProjectBySlug(slug)
+    if (project) {
+      document.title = `${project.title} | Imana's Portfolio`
+    }
   }
 })
 
