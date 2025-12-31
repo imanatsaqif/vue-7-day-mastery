@@ -127,18 +127,47 @@ npm run preview
 
 ---
 
-## Next Learning Goals
+## Day 5: API Integration ✅
 
-* Replace static data with API-based data fetching
-* Introduce async actions in stores
-* Add authentication and protected routes
-* Implement form handling and validation
-* Add testing for stores and routing logic
+### Features Added
+- **GitHub API Integration**: Real-time project data from your GitHub repositories
+- **Custom Composables**: `useGitHub`, `useProjects` for reusable API logic
+- **Professional Error Handling**: Graceful fallback to static data
+- **Loading States**: Skeleton loaders for smooth UX
+- **Data Transformation**: GitHub repos → Portfolio projects with custom mappings
+
+### Tech Stack Added
+- Axios for HTTP requests
+- Environment variable management
+- GitHub REST API v3
+- LocalStorage caching strategy
+
+### Key Files
 
 ---
 
-## Summary
+src/
+├── services/
+│ ├── api.js # Axios instance with interceptors
+│ └── githubService.js # GitHub API service
+├── composables/
+│ ├── useGitHub.js # GitHub API composable
+│ └── useProjects.js # Projects data composable
+└── utils/
+└── repoTransformer.js # Data transformation logic
 
-This project represents a deliberate progression from basic Vue usage to a more professional application structure. The transition to Pinia marks a clear improvement in maintainability, clarity of data flow, and readiness for future expansion, aligning with modern Vue application architecture practices.
+---
 
-```
+
+### Environment Variables
+```env
+VITE_GITHUB_TOKEN=your_token_here
+VITE_GITHUB_USERNAME=imanatsaqif
+VITE_API_TIMEOUT=10000
+
+---
+
+Live Demo
+[View Day 5 Deployment](https://portfolio-api.vercel.app/)
+
+---

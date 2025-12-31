@@ -1,45 +1,66 @@
 // src/stores/projects.js
-import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { projects as initialProjects } from "@/data/projects";
+import { defineStore } from "pinia"
+import { ref, computed } from "vue"
+import { useProjects } from "@/composables/useProjects"
 
 export const useProjectsStore = defineStore("projects", () => {
+  const {
+    projects,
+    featuredProjects,
+    techStacks,
+    loading,
+    error,
+    useFallback,
+    getProjectBySlug,
+    fetchProjects,
+    triggerFallback
+  } = useProjects()
+
+  // State
+  const initialized = ref(false)
+  const lastFetchTime = ref(null)
+
+  // Computed
+  const isLoading = computed(() => loading.value)
+  const hasProjects = computed(() => projects.value.length > 0)
+  const hasError = computed(() => error.value !== null)
+
+  // Actions
+  const initProjects = async () => {
+    if (initialized.value) return
+    
+    await fetchProjects()
+    initialized.value = true
+    lastFetchTime.value = new Date()
+  }
+
+  const refreshProjects = async () => {
+    const result = await fetchProjects()
+    lastFetchTime.value = new Date()
+    return result
+  }
+
+  return {
     // State
-    const projects = ref(initialProjects);
-    const isLoading = ref(false);
-
-    // Getters (computed)
-    const featuredProjects = computed(() =>
-        projects.value.filter(p => p.isFeatured).slice(0, 3)
-    )
-
-    const techStacks = computed(() => {
-        const allTech = projects.value.flatMap(p => p.tech);
-        return [...new Set(allTech)]
-    });
-
+    initialized,
+    lastFetchTime,
+    useFallback,
+    
+    // Computed
+    projects,
+    featuredProjects,
+    techStacks,
+    isLoading,
+    hasProjects,
+    hasError,
+    
+    // Error
+    error,
+    
     // Actions
-    const getProjectBySlug = (slug) => {
-        return projects.value.find(p => p.slug === slug)
-    }
-
-    const fetchProjects = async () => {
-        isLoading.value = true
-        try {
-            // Simulate fetching data
-            await new Promise(resolve => setTimeout(resolve, 500));
-            projects.value = initialProjects;
-        } finally {
-            isLoading.value = false
-        }
-    }
-
-    return {
-        projects,
-        isLoading,
-        featuredProjects,
-        techStacks,
-        getProjectBySlug,
-        fetchProjects
-    }
-});
+    getProjectBySlug,
+    initProjects,
+    refreshProjects,
+    triggerFallback
+  }
+})
