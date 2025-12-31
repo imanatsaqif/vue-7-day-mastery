@@ -4,7 +4,6 @@ import { useAppStore } from '@/stores/app'
 
 const projectsStore = useProjectsStore()
 const appStore = useAppStore()
-console.log(projectsStore.techStacks)
 </script>
 
 <template>
