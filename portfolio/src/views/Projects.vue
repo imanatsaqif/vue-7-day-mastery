@@ -1,14 +1,25 @@
+<!-- src/views/Projects.vue -->
 <script setup>
 import { useProjectsStore } from '@/stores/projects'
 import { RouterLink } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 
 const store = useProjectsStore()
 
 onMounted(() => {
+  console.log('[Projects] Component mounted, initialized:', store.initialized)
   if (!store.initialized) {
     store.initProjects()
   }
+})
+
+// Determine what to show
+const showContent = computed(() => {
+  return !store.isLoading && store.hasProjects
+})
+
+const showEmptyState = computed(() => {
+  return !store.isLoading && !store.hasProjects && !store.hasError
 })
 </script>
 
@@ -35,24 +46,64 @@ onMounted(() => {
     </div>
 
     <!-- Error State -->
-    <div v-else-if="store.error" class="text-center py-12">
+    <div v-else-if="store.hasError" class="text-center py-12">
       <div class="text-4xl mb-4">⚠️</div>
       <h2 class="text-2xl font-bold text-text-primary mb-2">Unable to Load Projects</h2>
       <p class="text-text-muted mb-6">
-        {{ store.error.message || 'GitHub API request failed' }}
+        {{ store.error?.message || 'GitHub API request failed' }}
       </p>
-      <button @click="store.refreshProjects"
+      <div class="space-x-4">
+        <button @click="store.refreshProjects"
+                class="px-6 py-3 bg-primary text-text-inverse rounded-lg hover:bg-primary-hover transition">
+          Retry GitHub API
+        </button>
+        <button @click="store.triggerFallback"
+                class="px-6 py-3 border-2 border-border text-text-primary rounded-lg hover:bg-surface-muted transition">
+          Use Local Projects
+        </button>
+      </div>
+      <div class="mt-6 p-4 bg-surface-muted rounded-lg">
+        <p class="text-sm text-text-muted">
+          <span v-if="store.useFallback">✅ Currently showing static portfolio projects</span>
+          <span v-else>🔄 Trying to fetch from GitHub API...</span>
+        </p>
+        <p class="text-xs text-text-muted mt-2">
+          Projects loaded: {{ store.projects.length }} | 
+          Fallback mode: {{ store.useFallback ? 'ON' : 'OFF' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Empty State (no projects at all) -->
+    <div v-else-if="showEmptyState" class="text-center py-12">
+      <div class="text-4xl mb-4">📂</div>
+      <h2 class="text-2xl font-bold text-text-primary mb-2">No Projects Found</h2>
+      <p class="text-text-muted mb-6">No projects are available to display.</p>
+      <button @click="store.triggerFallback"
               class="px-6 py-3 bg-primary text-text-inverse rounded-lg hover:bg-primary-hover transition">
-        Retry
+        Load Sample Projects
       </button>
-      <p class="mt-4 text-sm text-text-muted">
-        Showing static portfolio projects as fallback
-      </p>
     </div>
 
     <!-- Success State -->
-    <div v-else>
-      <h1 class="text-4xl font-bold mb-8 text-text-primary">My Projects</h1>
+    <div v-else-if="showContent">
+      <!-- Header with status indicator -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-2">
+          <h1 class="text-4xl font-bold text-text-primary">My Projects</h1>
+          <span class="text-sm px-3 py-1 rounded-full" 
+                :class="store.useFallback 
+                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
+                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'">
+            {{ store.useFallback ? '📁 Local Mode' : '🌐 Live from GitHub' }}
+          </span>
+        </div>
+        <p class="text-text-muted">
+          {{ store.useFallback 
+            ? 'Showing static portfolio projects (GitHub API unavailable)' 
+            : `Loaded ${store.projects.length} projects from GitHub` }}
+        </p>
+      </div>
       
       <!-- Featured Projects Section -->
       <section class="mb-12" v-if="store.featuredProjects.length > 0">
@@ -60,8 +111,8 @@ onMounted(() => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="project in store.featuredProjects" :key="project.id"
                class="bg-surface-elevated rounded-xl shadow-lg p-6 hover-lift border border-border">
-            <!-- GitHub Stats Badge -->
-            <div v-if="project.repoData" class="flex items-center justify-between mb-3">
+            <!-- GitHub Stats Badge (only show for GitHub projects) -->
+            <div v-if="project.repoData && !store.useFallback" class="flex items-center justify-between mb-3">
               <a :href="project.repoData.url" target="_blank" 
                  class="text-xs text-primary hover:text-primary-hover transition">
                 View on GitHub →
@@ -89,12 +140,18 @@ onMounted(() => {
       </section>
 
       <!-- All Projects Section -->
-      <section v-if="store.projects.length > 0">
+      <section>
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold text-text-secondary">All Projects</h2>
-          <span class="text-text-muted text-sm">
-            {{ store.projects.length }} projects
-          </span>
+          <div class="flex items-center space-x-4">
+            <span class="text-text-muted text-sm">
+              {{ store.projects.length }} projects
+            </span>
+            <button v-if="store.useFallback" @click="store.refreshProjects"
+                    class="text-sm px-3 py-1 border border-border rounded hover:bg-surface-muted transition">
+              Try GitHub API Again
+            </button>
+          </div>
         </div>
         <div class="space-y-4">
           <div v-for="project in store.projects" :key="project.id"
@@ -124,13 +181,6 @@ onMounted(() => {
           </div>
         </div>
       </section>
-
-      <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <div class="text-4xl mb-4">📂</div>
-        <h2 class="text-2xl font-bold text-text-primary mb-2">No Projects Found</h2>
-        <p class="text-text-muted">Check back later for new projects!</p>
-      </div>
     </div>
   </div>
 </template>
