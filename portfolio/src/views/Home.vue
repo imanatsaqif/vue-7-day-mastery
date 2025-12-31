@@ -1,9 +1,14 @@
 <script setup>
 import { useProjectsStore } from '@/stores/projects'
 import { useAppStore } from '@/stores/app'
+import { onMounted } from 'vue'
 
 const projectsStore = useProjectsStore()
 const appStore = useAppStore()
+
+onMounted(() => {
+  projectsStore.initProjects()
+})
 </script>
 
 <template>
