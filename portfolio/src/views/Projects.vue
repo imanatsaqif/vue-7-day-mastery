@@ -2,30 +2,21 @@
 <script setup>
 import { useProjectsStore } from '@/stores/projects'
 import { RouterLink } from 'vue-router'
-import { onMounted, computed } from 'vue'
+import { onMounted } from 'vue'
 
 const store = useProjectsStore()
 
 onMounted(() => {
-  console.log('[Projects] Component mounted, initialized:', store.initialized)
   if (!store.initialized) {
     store.initProjects()
   }
-})
-
-// Determine what to show
-const showContent = computed(() => {
-  return !store.isLoading && store.hasProjects
-})
-
-const showEmptyState = computed(() => {
-  return !store.isLoading && !store.hasProjects && !store.hasError
 })
 </script>
 
 <template>
   <div class="max-w-6xl mx-auto">
-    <!-- Loading State -->
+    
+    <!-- 1. Loading State -->
     <div v-if="store.isLoading" class="space-y-8">
       <div>
         <div class="h-8 bg-surface-muted rounded-lg w-48 mb-6 animate-pulse"></div>
@@ -45,12 +36,12 @@ const showEmptyState = computed(() => {
       </div>
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="store.hasError" class="text-center py-12">
+    <!-- 2. Error State (ONLY when we have error AND NOT using fallback) -->
+    <div v-else-if="store.error && !store.useFallback" class="text-center py-12">
       <div class="text-4xl mb-4">⚠️</div>
       <h2 class="text-2xl font-bold text-text-primary mb-2">Unable to Load Projects</h2>
       <p class="text-text-muted mb-6">
-        {{ store.error?.message || 'GitHub API request failed' }}
+        {{ store.error.message || 'GitHub API request failed' }}
       </p>
       <div class="space-x-4">
         <button @click="store.refreshProjects"
@@ -64,30 +55,14 @@ const showEmptyState = computed(() => {
       </div>
       <div class="mt-6 p-4 bg-surface-muted rounded-lg">
         <p class="text-sm text-text-muted">
-          <span v-if="store.useFallback">✅ Currently showing static portfolio projects</span>
-          <span v-else>🔄 Trying to fetch from GitHub API...</span>
-        </p>
-        <p class="text-xs text-text-muted mt-2">
-          Projects loaded: {{ store.projects.length }} | 
-          Fallback mode: {{ store.useFallback ? 'ON' : 'OFF' }}
+          Currently trying to fetch from GitHub API...
         </p>
       </div>
     </div>
 
-    <!-- Empty State (no projects at all) -->
-    <div v-else-if="showEmptyState" class="text-center py-12">
-      <div class="text-4xl mb-4">📂</div>
-      <h2 class="text-2xl font-bold text-text-primary mb-2">No Projects Found</h2>
-      <p class="text-text-muted mb-6">No projects are available to display.</p>
-      <button @click="store.triggerFallback"
-              class="px-6 py-3 bg-primary text-text-inverse rounded-lg hover:bg-primary-hover transition">
-        Load Sample Projects
-      </button>
-    </div>
-
-    <!-- Success State -->
-    <div v-else-if="showContent">
-      <!-- Header with status indicator -->
+    <!-- 3. Content State (we have projects to show) -->
+    <div v-else-if="store.projects.length > 0" class="projects-content">
+      <!-- Header -->
       <div class="mb-8">
         <div class="flex items-center justify-between mb-2">
           <h1 class="text-4xl font-bold text-text-primary">My Projects</h1>
@@ -100,18 +75,19 @@ const showEmptyState = computed(() => {
         </div>
         <p class="text-text-muted">
           {{ store.useFallback 
-            ? 'Showing static portfolio projects (GitHub API unavailable)' 
+            ? 'Showing static portfolio projects' 
             : `Loaded ${store.projects.length} projects from GitHub` }}
         </p>
       </div>
       
-      <!-- Featured Projects Section -->
+      <!-- Featured Projects -->
       <section class="mb-12" v-if="store.featuredProjects.length > 0">
         <h2 class="text-2xl font-semibold mb-6 text-text-secondary">Featured Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="project in store.featuredProjects" :key="project.id"
                class="bg-surface-elevated rounded-xl shadow-lg p-6 hover-lift border border-border">
-            <!-- GitHub Stats Badge (only show for GitHub projects) -->
+            
+            <!-- GitHub Stats (only for live GitHub projects) -->
             <div v-if="project.repoData && !store.useFallback" class="flex items-center justify-between mb-3">
               <a :href="project.repoData.url" target="_blank" 
                  class="text-xs text-primary hover:text-primary-hover transition">
@@ -139,7 +115,7 @@ const showEmptyState = computed(() => {
         </div>
       </section>
 
-      <!-- All Projects Section -->
+      <!-- All Projects -->
       <section>
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold text-text-secondary">All Projects</h2>
@@ -182,5 +158,17 @@ const showEmptyState = computed(() => {
         </div>
       </section>
     </div>
+
+    <!-- 4. Empty State (no projects at all) -->
+    <div v-else class="text-center py-12">
+      <div class="text-4xl mb-4">📂</div>
+      <h2 class="text-2xl font-bold text-text-primary mb-2">No Projects Found</h2>
+      <p class="text-text-muted">No projects are available to display.</p>
+      <button @click="store.triggerFallback"
+              class="mt-4 px-6 py-3 bg-primary text-text-inverse rounded-lg hover:bg-primary-hover transition">
+        Load Sample Projects
+      </button>
+    </div>
+
   </div>
 </template>

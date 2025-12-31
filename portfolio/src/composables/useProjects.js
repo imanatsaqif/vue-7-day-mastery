@@ -10,27 +10,22 @@ export function useProjects() {
 
   // Transform GitHub repos to projects OR use fallback
   const transformedProjects = computed(() => {
-    console.log('[useProjects] useFallback:', useFallback.value)
-    console.log('[useProjects] filteredRepos:', filteredRepos.value.length)
-    
+    // If explicitly using fallback, return static projects
     if (useFallback.value) {
-      console.log('[useProjects] Using fallback data:', staticProjects)
       return staticProjects
     }
     
-    const githubProjects = filteredRepos.value.map(transformRepoToProject)
-    console.log('[useProjects] GitHub projects:', githubProjects.length)
-    
-    // If GitHub returned empty (network error) but we haven't triggered fallback yet
-    if (githubProjects.length === 0 && error.value) {
-      console.log('[useProjects] Empty GitHub data with error, using fallback')
-      return staticProjects
+    // If GitHub returned repos, transform them
+    if (filteredRepos.value.length > 0) {
+      const githubProjects = filteredRepos.value.map(transformRepoToProject)
+      return sortProjects(githubProjects)
     }
     
-    return sortProjects(githubProjects)
+    // No GitHub repos, return static fallback
+    return staticProjects
   })
 
-  // Featured projects (first 3 featured or first 3 overall)
+  // Featured projects
   const featuredProjects = computed(() => {
     const projects = transformedProjects.value
     const featured = projects.filter(p => p.isFeatured)
@@ -54,15 +49,15 @@ export function useProjects() {
   const fetchProjects = async () => {
     const result = await fetchRepos({ limit: 20 })
     
-    if (!result.success || (result.success && filteredRepos.value.length === 0)) {
-      console.warn('GitHub API failed or returned empty, using fallback data')
+    // If fetch failed, trigger fallback
+    if (!result.success) {
       useFallback.value = true
     }
     
     return result
   }
 
-  // Manual fallback trigger (for testing)
+  // Manual fallback trigger
   const triggerFallback = () => {
     useFallback.value = true
   }
@@ -76,6 +71,6 @@ export function useProjects() {
     useFallback,
     getProjectBySlug,
     fetchProjects,
-    triggerFallback  // For testing
+    triggerFallback
   }
 }
