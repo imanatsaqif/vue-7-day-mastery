@@ -6,7 +6,6 @@ import About from '@/views/About.vue'
 import Projects from '@/views/Projects.vue'
 import ProjectDetail from '@/views/ProjectDetail.vue'
 import Contact from '@/views/Contact.vue'
-import { useProjectsStore } from '@/stores/projects'
 
 const routes = [
   {
@@ -38,16 +37,13 @@ const routes = [
         meta: { title: 'Project Details' },
         beforeEnter: async (to) => {
           const slug = to.params.slug
-
           if (typeof slug !== 'string') {
             return { name: 'projects' }
           }
 
-          const store = useProjectsStore()
-          const project = store.getProjectBySlug(slug)
-          if (!project) {
-            return { name: 'projects' }
-          }
+          // Use store inside component instead of router guard
+          // Component will handle the validation
+          return true
         }
       },
       {
@@ -68,15 +64,17 @@ const router = createRouter({
   },
 })
 
+// Update page title dynamically
 router.afterEach((to) => {
+  let title = to.meta?.title || 'Imana\'s Portfolio'
+  
   if (to.name === 'project-detail') {
     const slug = to.params.slug
-    const store = useProjectsStore()  // Langsung pakai
-    const project = store.getProjectBySlug(slug)
-    if (project) {
-      document.title = `${project.title} | Imana's Portfolio`
-    }
+    // Title will be updated by ProjectDetail component
+    title = `Project | Imana's Portfolio`
   }
+  
+  document.title = title
 })
 
 export default router

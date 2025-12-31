@@ -8,7 +8,6 @@ export function useGitHub() {
   const error = ref(null)
   const rateLimit = ref(null)
 
-  // Fetch repositories
   const fetchRepos = async (options = {}) => {
     loading.value = true
     error.value = null
@@ -18,26 +17,22 @@ export function useGitHub() {
       
       if (result.success) {
         repos.value = result.data
+        const limit = await githubService.getRateLimit()
+        rateLimit.value = limit
+        return { success: true, data: result.data }
       } else {
         error.value = result.error
-        throw new Error(result.error.message)
+        return { success: false, error: result.error }
       }
-      
-      // Get rate limit after successful request
-      const limit = await githubService.getRateLimit()
-      rateLimit.value = limit
-      
-      return result
     } catch (err) {
-      console.error('[useGitHub] Fetch error:', err)
-      error.value = err
-      return { success: false, error: err }
+      error.value = { message: err.message || 'Network error', status: null }
+      return { success: false, error: error.value }
     } finally {
       loading.value = false
     }
   }
 
-  // Filtered repos - exclude forks, archived, etc.
+  // Filter out forks, archived, and disabled repos
   const filteredRepos = computed(() => {
     return repos.value.filter(repo => 
       !repo.fork && 
@@ -46,7 +41,6 @@ export function useGitHub() {
     )
   })
 
-  // Get specific repo by name
   const getRepoByName = (name) => {
     return repos.value.find(repo => repo.name === name)
   }

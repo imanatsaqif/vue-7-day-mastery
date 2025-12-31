@@ -1,3 +1,4 @@
+// src/services/api.js
 import axios from 'axios'
 
 const api = axios.create({
@@ -11,36 +12,41 @@ const api = axios.create({
   }
 })
 
-// Request interceptor
+// Add request timeout handling
 api.interceptors.request.use(
   (config) => {
-    console.log(`[API] ${config.method.toUpperCase()} ${config.url}`)
+    // Add timestamp for potential request tracking
+    config.metadata = { startTime: new Date() }
     return config
   },
   (error) => {
-    console.error('[API Request Error]', error)
     return Promise.reject(error)
   }
 )
 
-// Response interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log(`[API Success] ${response.status} ${response.config.url}`)
+    const endTime = new Date()
+    const duration = endTime - response.config.metadata.startTime
+    console.debug(`[API] ${response.config.method.toUpperCase()} ${response.config.url} (${duration}ms)`)
     return response
   },
   (error) => {
-    console.error('[API Error]', {
-      url: error.config?.url,
-      status: error.response?.status,
-      message: error.message
-    })
+    // Enhanced error handling
+    if (error.code === 'ECONNABORTED') {
+      error.message = 'Request timeout - please try again'
+    }
     
-    // Rate limit handling
     if (error.response?.status === 403 && 
         error.response.headers['x-ratelimit-remaining'] === '0') {
       const resetTime = new Date(error.response.headers['x-ratelimit-reset'] * 1000)
-      console.error(`Rate limit exceeded. Resets at: ${resetTime.toLocaleTimeString()}`)
+      error.rateLimitInfo = {
+        reset: resetTime,
+        remaining: error.response.headers['x-ratelimit-remaining'],
+        limit: error.response.headers['x-ratelimit-limit']
+      }
+      
+      console.warn(`GitHub API rate limit exceeded. Resets at: ${resetTime.toLocaleTimeString()}`)
     }
     
     return Promise.reject(error)
