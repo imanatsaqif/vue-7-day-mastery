@@ -1,3 +1,4 @@
+// src/composables/useWeather.js
 import { ref, computed } from 'vue';
 import weatherService from '@/services/weatherService';
 
