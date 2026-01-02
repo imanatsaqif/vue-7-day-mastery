@@ -1,3 +1,4 @@
+// src/services/weatherService.js
 import api from "./api";
 
 class WeatherService {
@@ -61,5 +62,36 @@ class WeatherService {
       }
     }
   }
+
+  async searchCities(query) {
+  try {
+    // WeatherAPI punya endpoint /search.json untuk autocomplete
+    const response = await api.get('/search.json', {
+      params: {
+        q: query
+      }
+    })
+    
+    return {
+      success: true,
+      data: response.data.map(city => ({
+        name: city.name,
+        region: city.region,
+        country: city.country,
+        lat: city.lat,
+        lon: city.lon
+      }))
+    }
+    
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        message: "Failed to search cities",
+        originalError: error
+      }
+    }
+  }
+}
 }
 export default new WeatherService();

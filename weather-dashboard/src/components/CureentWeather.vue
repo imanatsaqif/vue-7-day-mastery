@@ -1,14 +1,21 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useWeatherStore } from '@/stores/weather'
 
 const weatherStore = useWeatherStore()
 const cityInput = ref('')
+const showDropdown = ref(false)
+const searchTimeout = ref(null)
 
-const handleSearch = async () => {
-    if (!cityInput.value.trim()) return
-    await weatherStore.fetchWeather(cityInput.value)
-    cityInput.value = ''
+const handleSearch = async (cityName = null) => {
+  const searchCity = cityName || cityInput.value.trim()
+  
+  if (!searchCity) return
+  
+  await weatherStore.fetchWeather(searchCity)
+  cityInput.value = ''
+  showDropdown.value = false
+  weatherStore.searchResults = [] // <-- CLEAR SEARCH RESULTS
 }
 
 onMounted(() => {
@@ -19,41 +26,74 @@ onMounted(() => {
 
 const displayTemperature = computed(() => {
     if (!weatherStore.weatherData?.temperature) return '--'
-    
+
     let temp = weatherStore.weatherData.temperature
     if (weatherStore.unit === 'imperial') {
-        temp = (temp * 9/5) + 32
+        temp = (temp * 9 / 5) + 32
     }
     return `${Math.round(temp)}°${weatherStore.unit === 'metric' ? 'C' : 'F'}`
 })
 
 const displayWindSpeed = computed(() => {
     if (!weatherStore.weatherData?.windSpeed) return '--'
-    
+
     let speed = weatherStore.weatherData.windSpeed
     let unit = 'km/h'
-    
+
     if (weatherStore.unit === 'imperial') {
         speed = speed * 0.621371
         unit = 'mph'
     }
     return `${Math.round(speed)} ${unit}`
 })
+
+watch(cityInput, (newValue) => {
+    clearTimeout(searchTimeout.value)
+
+    if (!newValue.trim()) {
+        showDropdown.value = false
+        return
+    }
+
+    if (newValue.trim().length >= 3) {
+        searchTimeout.value = setTimeout(async () => {
+            await weatherStore.searchCities(newValue.trim())
+            showDropdown.value = true
+        }, 300) // Debounce 300ms
+    } else {
+        showDropdown.value = false
+    }
+})
+
+const selectCity = (city) => {
+    cityInput.value = `${city.name}, ${city.region}, ${city.country}`
+    handleSearch(city.name) // Kirim nama kota saja ke API
+}
+const handleClickOutside = () => {
+    setTimeout(() => {
+        showDropdown.value = false
+    }, 200)
+}
 </script>
 
 <template>
     <div class="weather-container">
         <!-- Search Input -->
         <div class="search-box">
-            <input
-                v-model="cityInput"
-                @keyup.enter="handleSearch"
-                placeholder="Enter city name..."
-                class="search-input"
-            />
-            <button @click="handleSearch" class="search-btn">
+            <input v-model="cityInput" @keyup.enter="handleSearch()" @blur="handleClickOutside"
+                placeholder="Type at least 3 characters..." class="search-input" />
+            <button @click="handleSearch()" class="search-btn">
                 Search
             </button>
+            <div v-if="showDropdown && weatherStore.searchResults.length > 0" class="search-dropdown">
+                <div v-for="city in weatherStore.searchResults" :key="`${city.name}-${city.country}`"
+                    @mousedown="selectCity(city)" class="dropdown-item">
+                    <div class="city-name">{{ city.name }}</div>
+                    <div class="city-details">
+                        {{ city.region }}, {{ city.country }}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Loading State -->
@@ -69,10 +109,10 @@ const displayWindSpeed = computed(() => {
         <!-- Weather Data -->
         <div v-else-if="weatherStore.weatherData" class="weather-card">
             <h2 class="location-name">{{ weatherStore.weatherData.location }}</h2>
-            
+
             <div class="temperature">{{ displayTemperature }}</div>
             <div class="condition">{{ weatherStore.weatherData.condition }}</div>
-            
+
             <div class="additional-data">
                 <div class="data-item">
                     <span class="label">Humidity:</span>
@@ -89,10 +129,7 @@ const displayWindSpeed = computed(() => {
                 <button @click="weatherStore.toggleUnit" class="unit-btn">
                     Switch to {{ weatherStore.unit === 'metric' ? '°F' : '°C' }}
                 </button>
-                <button 
-                    @click="weatherStore.addFavorite(weatherStore.weatherData.location)" 
-                    class="favorite-btn"
-                >
+                <button @click="weatherStore.addFavorite(weatherStore.weatherData.location)" class="favorite-btn">
                     ★ Add to Favorites
                 </button>
             </div>
@@ -109,7 +146,6 @@ const displayWindSpeed = computed(() => {
 </template>
 
 <style scoped>
-/* Gunakan utility classes dari Tailwind v4 */
 .weather-container {
     max-width: 400px;
     margin: 0 auto;
@@ -117,10 +153,29 @@ const displayWindSpeed = computed(() => {
 }
 
 .search-box {
+    position: relative;
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
+
+.search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    margin-top: 6px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 50;
+}
+
 
 .search-input {
     flex: 1;
@@ -162,11 +217,6 @@ const displayWindSpeed = computed(() => {
     text-align: center;
     border: 1px solid #f1f5f9;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.weather-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .location-name {
@@ -259,7 +309,9 @@ const displayWindSpeed = computed(() => {
     border-top: 1px solid #e2e8f0;
 }
 
-.unit-btn, .favorite-btn, .try-btn {
+.unit-btn,
+.favorite-btn,
+.try-btn {
     flex: 1;
     padding: 12px 16px;
     border: none;
@@ -302,16 +354,36 @@ const displayWindSpeed = computed(() => {
     border-color: #3b82f6;
 }
 
+.dropdown-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f5f9;
+}
+
+.city-name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.city-details {
+    font-size: 12px;
+    color: #64748b;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .weather-container {
         padding: 16px;
     }
-    
+
     .temperature {
         font-size: 40px;
     }
-    
+
     .actions {
         flex-direction: column;
     }
