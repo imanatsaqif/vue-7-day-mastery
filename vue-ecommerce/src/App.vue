@@ -1,7 +1,8 @@
 <script setup>
-import router from './router';
+import Navbar from '@/components/Navbar.vue'
 </script>
 
 <template>
+  <Navbar />
   <router-view />
 </template>
