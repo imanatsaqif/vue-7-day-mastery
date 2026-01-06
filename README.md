@@ -8,7 +8,8 @@ This repository documents a structured 7-day learning program to master Vue 3 th
 vue-7-day-mastery/
 ├── todo-app/          # Day 1–2: Vue fundamentals and component architecture
 ├── portfolio/         # Day 3–5: Routing, Pinia, and real API integration
-└── weather-dashboard/ # Day 6: Advanced composables and external API services
+├── weather-dashboard/ # Day 6: Advanced composables and external API services
+└── vue-ecommerce/     # Day 7: Full-stack e-commerce application
 ```
 
 ## Learning Progress
@@ -64,6 +65,15 @@ vue-7-day-mastery/
 - Advanced composable patterns with debounced search and caching
 - Multi-layer state with favorites persisted to localStorage
 
+### Day 7: E-Commerce Application
+**Project:** `/vue-ecommerce`  
+**Focus:**
+- Synthesizing routing, state management, and composables in a complex application
+- Building a complete shopping cart with Pinia and localStorage persistence
+- Implementing a multi-step checkout flow
+- Integrating product data from FakeStoreAPI
+- Creating reusable, event-driven components within a scalable architecture
+
 ## Projects & Live Demos
 
 | Project | Focus | Live Demo |
@@ -71,6 +81,7 @@ vue-7-day-mastery/
 | **Todo App** | Vue fundamentals, component architecture | [Live Demo](https://todo-vueproject.vercel.app/) |
 | **Portfolio** | Routing, Pinia, API integration, composables | [Live Demo](https://imana-portfolio.vercel.app/) |
 | **Weather Dashboard** | Advanced composables, external APIs, geolocation | [Live Demo](https://weather-dashboard-imana.vercel.app/) |
+| **E-Commerce App** | Full-stack application, complex state, checkout flow | [Live Demo](https://vue-commerce-imana.vercel.app/) |
 
 ## Technical Stack
 
