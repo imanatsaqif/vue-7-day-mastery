@@ -9,6 +9,9 @@ import Auth from "./components/Auth.vue";
 import Toast from "./components/Toast.vue";
 
 const session = ref(null);
+const userRole = ref(null);
+const allUsers = ref([]);
+const selectedUserFilter = ref("all");
 const showToast = ref(false);
 const toastMessage = ref("");
 const filter = ref("all");
@@ -35,13 +38,22 @@ const filteredTodos = computed(() => {
 
 // 1. Ambil Data
 const fetchTodos = async () => {
-  const { data, error } = await supabase
-    .from("todos")
-    .select("*")
-    .order("created_at", { ascending: false });
+  // Join dengan profiles untuk dapat email author
+  let query = supabase.from("todos").select("*, author:profiles(email)");
+  
+  if (userRole.value === 'admin' && selectedUserFilter.value !== 'all') {
+    query = query.eq('user_id', selectedUserFilter.value);
+  }
 
+  const { data, error } = await query.order("created_at", { ascending: false });
   if (error) console.error("Error fetching:", error);
   else todos.value = data;
+};
+
+// Ambil list user (hanya untuk Admin)
+const fetchAllUsers = async () => {
+  const { data } = await supabase.from('profiles').select('id, email');
+  allUsers.value = data || [];
 };
 
 // 2. Tambah Data
@@ -104,22 +116,23 @@ onMounted(() => {
     session.value = _session;
 
     if (_session) {
-      fetchTodos();
-      if (isLogin || event === 'SIGNED_UP') {
-        // Cek role dari public.profiles
-        supabase.from('profiles').select('role').eq('id', _session.user.id).single()
-          .then(({ data }) => {
-            if (data?.role === 'admin') {
-              toastMessage.value = "Sembah Sujud, Admin";
-            } else {
-              toastMessage.value = event === 'SIGNED_UP' 
-                ? "Akun berhasil dibuat! Selamat bergabung." 
-                : "Selamat datang kembali!";
-            }
+      // Cek role saat login
+      supabase.from('profiles').select('role').eq('id', _session.user.id).single()
+        .then(({ data }) => {
+          userRole.value = data?.role;
+          if (userRole.value === 'admin') fetchAllUsers();
+          fetchTodos();
+
+          if (isLogin || event === 'SIGNED_UP') {
+            toastMessage.value = userRole.value === 'admin' 
+              ? "Sembah Sujud, Admin" 
+              : (event === 'SIGNED_UP' ? "Akun berhasil dibuat!" : "Selamat datang kembali!");
             showToast.value = true;
-          });
-      }
+          }
+        });
     } else {
+      session.value = null;
+      userRole.value = null;
       todos.value = [];
     }
   });
@@ -155,8 +168,15 @@ const handleLogout = async () => {
         <span class="font-medium">{{ remaining }}</span>
       </p>
 
-      <!-- Filters -->
-      <TaskFilters v-if="hasTasks" v-model="filter" />
+      <!-- Combined Filters (Status + Admin User) -->
+      <TaskFilters 
+        v-if="hasTasks" 
+        v-model="filter"
+        :is-admin="userRole === 'admin'"
+        :users="allUsers"
+        v-model:user-filter="selectedUserFilter"
+        @update:user-filter="fetchTodos"
+      />
 
       <!-- Task list -->
       <TaskList

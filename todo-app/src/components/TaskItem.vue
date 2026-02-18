@@ -10,9 +10,14 @@
     />
 
     <!-- Todo title -->
-    <span :class="todoClass">
-      {{ todo.title }}
-    </span>
+    <div class="flex-1 flex flex-col">
+      <span :class="todoClass">
+        {{ todo.title }}
+      </span>
+      <span v-if="todo.author?.email" class="text-[10px] text-gray-400 font-medium italic">
+        Author: {{ todo.author.email.split('@')[0] }}
+      </span>
+    </div>
 
     <!-- Delete button -->
     <button 
