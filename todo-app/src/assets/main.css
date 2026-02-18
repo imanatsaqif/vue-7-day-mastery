@@ -5,20 +5,16 @@
   min-height: 100vh;
 }
 
-a,
-.green {
+/* Links use accent color */
+a, .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
+  color: var(--color-accent);
+  transition: 0.18s;
   padding: 3px;
 }
 
 @media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+  a:hover { background-color: rgba(207,92,54,0.06); }
 }
 
-button{
-  cursor: pointer;
-}
+button{ cursor: pointer; }

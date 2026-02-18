@@ -35,26 +35,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-6 left-6 z-50 overflow-hidden rounded-lg bg-white shadow-2xl border border-gray-100 min-w-[280px] animate-slide-in">
+  <div class="fixed bottom-6 left-6 z-50 overflow-hidden rounded-lg toast-success shadow-2xl min-w-[280px] animate-slide-in">
     <div class="px-5 py-4 flex items-center gap-3">
       <!-- Icon -->
-      <div class="bg-green-100 p-2 rounded-full text-green-600">
+      <div class="bg-[rgba(0,0,0,0.04)] p-2 rounded-full text-[var(--color-accent)]">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
       </div>
       
       <div>
-        <h4 class="font-semibold text-gray-900">Success!</h4>
-        <p class="text-sm text-gray-600">{{ message }}</p>
+        <h4 class="font-semibold">Success!</h4>
+        <p class="text-sm">{{ message }}</p>
       </div>
     </div>
 
     <!-- Timer / Progress Bar -->
-    <div 
-      class="h-1 bg-green-500 transition-all duration-100 ease-linear"
-      :style="{ width: progress + '%' }"
-    ></div>
+    <div class="toast-progress transition-all duration-100 ease-linear" :style="{ width: progress + '%' }"></div>
   </div>
 </template>
 

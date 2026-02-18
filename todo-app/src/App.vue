@@ -145,16 +145,16 @@ const handleLogout = async () => {
 
 <template>
   <div
-    class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4"
+    class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4 py-12 app-root"
   >
     <Auth v-if="!session" />
     <div
       v-else
-      class="w-full max-w-3xl bg-white rounded-xl shadow p-4 sm:p-6 flex flex-col gap-y-4"
+      class="w-full max-w-3xl app-card p-4 sm:p-6 flex flex-col gap-y-4 my-12"
     >
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Todo List</h1>
-        <button @click="handleLogout" class="text-sm text-red-500">
+        <button @click="handleLogout" class="btn-ghost btn-danger text-sm">
           Logout
         </button>
       </div>
@@ -163,7 +163,7 @@ const handleLogout = async () => {
       <TaskInput @add-task="addTodo" />
 
       <!-- Remaining count -->
-      <p v-if="hasTasks" class="text-sm text-gray-600">
+      <p v-if="hasTasks" class="text-sm text-muted">
         Remaining:
         <span class="font-medium">{{ remaining }}</span>
       </p>
@@ -186,7 +186,7 @@ const handleLogout = async () => {
       >
         <!-- Empty state message tetap sederhana -->
         <template #empty>
-          <p class="text-xl text-center py-8 text-gray-400">
+          <p class="text-xl text-center py-8 text-muted">
             No tasks added yet
           </p>
         </template>

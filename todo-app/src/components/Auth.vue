@@ -31,22 +31,22 @@ const handleAuth = async () => {
 </script>
 
 <template>
-  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+  <div class="app-card p-8 w-full max-w-md">
     <h2 class="text-2xl font-bold mb-6 text-center">
       {{ isSignUp ? 'Daftar Akun' : 'Selamat Datang' }}
     </h2>
     <form @submit.prevent="handleAuth" class="flex flex-col gap-4">
-      <input v-model="email" type="email" placeholder="Email" class="border p-2 rounded" required />
-      <input v-model="password" type="password" placeholder="Password" class="border p-2 rounded" required />
+      <input v-model="email" type="email" placeholder="Email" class="input" required />
+      <input v-model="password" type="password" placeholder="Password" class="input" required />
       
-      <button :disabled="loading" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">
+      <button :disabled="loading" class="btn-primary">
         {{ loading ? 'Sabar ya...' : (isSignUp ? 'Sign Up' : 'Log In') }}
       </button>
     </form>
     
     <p class="mt-4 text-center text-sm">
       {{ isSignUp ? 'Sudah punya akun?' : 'Belum punya akun?' }}
-      <button @click="isSignUp = !isSignUp" class="text-blue-500 underline ml-1">
+      <button @click="isSignUp = !isSignUp" class="text-muted underline ml-1" style="color: var(--color-accent);">
         {{ isSignUp ? 'Log In di sini' : 'Daftar di sini' }}
       </button>
     </p>

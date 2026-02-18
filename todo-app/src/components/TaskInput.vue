@@ -1,22 +1,33 @@
 <!-- TaskInput.vue -->
 <template>
-    <div class="flex gap-2 mb-4">
-        <input v-model="inputValue" @keyup.enter="handleSubmit" placeholder="Add a new task..." class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm
-                   text-gray-800 placeholder-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        <button @click="handleSubmit" class="w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 text-sm
-                   text-white hover:bg-blue-700 transition">
+    <div class="card-item mb-4">
+        <input 
+            ref="inputRef"
+            v-model="inputValue" 
+            @keyup.enter="handleSubmit" 
+            placeholder="Add a new task..." 
+            class="input flex-1 text-sm" 
+        />
+        <button @click="handleSubmit" class="btn-primary">
             Add
         </button>
     </div>
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted } from 'vue';
     // Define a reactive variable for the input value
     const emit = defineEmits(['add-task']);
     // Reactive variable to hold the input value
     const inputValue = ref('');
+    // Ref for the input element
+    const inputRef = ref(null);
+
+    // Auto focus when mounted
+    onMounted(() => {
+        inputRef.value?.focus();
+    });
+
     // Function to handle submission of the task
     const handleSubmit = () => {
         const trimmedValue = inputValue.value.trim();

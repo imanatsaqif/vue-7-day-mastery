@@ -1,6 +1,6 @@
 <!-- TaskItem Component -->
 <template>
-  <li class="flex items-center gap-3 p-3 bg-gray-100 rounded-lg shadow-sm">
+  <li class="card-item">
     <!-- Checkbox -->
     <input 
       type="checkbox" 
@@ -14,7 +14,7 @@
       <span :class="todoClass">
         {{ todo.title }}
       </span>
-      <span v-if="todo.author?.email" class="text-[10px] text-gray-400 font-medium italic">
+      <span v-if="todo.author?.email" class="text-[10px] text-muted font-medium italic">
         Author: {{ todo.author.email.split('@')[0] }}
       </span>
     </div>
@@ -22,19 +22,7 @@
     <!-- Delete button -->
     <button 
       @click="emit('delete-task', todo.id)" 
-      class="
-        ml-auto
-        inline-flex items-center
-        px-3 py-1.5
-        text-sm font-medium
-        text-red-600
-        border border-red-300
-        rounded-md
-        hover:bg-red-50
-        hover:border-red-400
-        hover:text-red-700
-        transition
-      "
+      class="ml-auto inline-flex items-center px-3 py-1.5 text-sm font-medium btn-danger"
     >
       Delete
     </button>
@@ -68,7 +56,7 @@ const toggleDone = () => {
 // Computed class for todo title
 const todoClass = computed(() => ({
   'flex-1': true,
-  'line-through text-gray-400': props.todo.is_completed,
-  'text-gray-800': !props.todo.is_completed
+  'line-through text-muted': props.todo.is_completed,
+  '': !props.todo.is_completed
 }))
 </script>
