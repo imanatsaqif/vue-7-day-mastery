@@ -1,54 +1,108 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* Project color palette (modern minimal) */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  --c-900: #050517; /* very dark */
+  --c-700: #cf5c36; /* accent */
+  --c-500: #efc88b; /* warm mid */
+  --c-300: #f4e3b2; /* soft */
+  --c-100: #d3d5d7; /* light neutral */
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  --color-bg: var(--c-900);
+  --color-surface: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));
+  --color-card: rgba(211,213,215,0.9); /* use c-100 as card base */
+  --color-accent: var(--c-700);
+  --color-accent-contrast: #fff;
+  --color-muted: rgba(255,255,255,0.72);
+  --color-text: rgba(255,255,255,0.92);
+  --color-border: rgba(255,255,255,0.2);
 
-  --vt-c-indigo: #2c3e50;
-
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
-
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --shadow-soft: 0 8px 30px rgba(2,6,23,0.6);
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
+/* Light mode fallback for clarity (keeps minimal feel) */
+@media (prefers-color-scheme: light) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --color-bg: linear-gradient(180deg, #f8fafb, #f4f6f7);
+    --color-card: #ffffff;
+    --color-text: #050517;
+    --color-muted: #6b7280;
+    --color-border: rgba(5,5,23,0.15);
   }
 }
+
+/* Utility / design tokens for app */
+.app-root {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--color-border);
+}
+
+.card-item {
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 12px rgba(2,6,23,0.15);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 600;
+}
+.btn-primary:hover { filter: brightness(0.94); }
+
+.btn-ghost {
+  background: transparent;
+  border-radius: 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--color-text);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.02); }
+
+.btn-danger {
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid rgba(255,107,107,0.12);
+}
+.btn-danger:hover { background: rgba(255,107,107,0.04); }
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: rgba(255,255,255,0.08);
+  color: var(--color-text);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.input:focus {
+  outline: none;
+  box-shadow: 0 4px 18px rgba(207,92,54,0.12), 0 0 0 3px rgba(207,92,54,0.08) inset;
+  border-color: var(--color-accent);
+}
+.input::placeholder { color: rgba(255,255,255,0.6); }
+
+.text-muted { color: var(--color-muted); }
+
+.toast-success { background: rgba(255,255,255,0.95); color: #050517; }
+.toast-progress { background: var(--color-accent); height: 4px; }
+
+/* small helper for dropdown active background */
+.active-muted-bg { background: rgba(255,255,255,0.05); }
 
 *,
 *::before,
@@ -60,7 +114,7 @@
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--color-bg);
   transition:
     color 0.5s,
     background-color 0.5s;
