@@ -17,7 +17,6 @@ const handleAuth = async () => {
       password: password.value,
     })
     if (error) alert(error.message)
-    else alert('Selamat datang di im-TodoApp')
   } else {
     // Logic Login
     const { error } = await supabase.auth.signInWithPassword({
@@ -25,7 +24,6 @@ const handleAuth = async () => {
       password: password.value,
     })
     if (error) alert(error.message)
-    else alert('Selamat datang di im-TodoApp')
   }
   
   loading.value = false

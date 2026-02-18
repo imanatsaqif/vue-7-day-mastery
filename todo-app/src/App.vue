@@ -6,8 +6,11 @@ import TaskInput from "./components/TaskInput.vue";
 import TaskList from "./components/TaskList.vue";
 import TaskFilters from "./components/TaskFilters.vue";
 import Auth from "./components/Auth.vue";
+import Toast from "./components/Toast.vue";
 
 const session = ref(null);
+const showToast = ref(false);
+const toastMessage = ref("");
 const filter = ref("all");
 
 /* [Belajar Reactive]
@@ -96,10 +99,29 @@ onMounted(() => {
   });
 
   // Selalu periksa perubahan status auth (login/logout/signup)
-  supabase.auth.onAuthStateChange((_event, _session) => {
+  supabase.auth.onAuthStateChange((event, _session) => {
+    const isLogin = !session.value && _session; // Sebelumnya null, sekarang ada
     session.value = _session;
-    if (_session) fetchTodos(); // Ambil data saat login berhasil
-    else todos.value = []; // Kosongkan data saat logout
+
+    if (_session) {
+      fetchTodos();
+      if (isLogin || event === 'SIGNED_UP') {
+        // Cek role dari public.profiles
+        supabase.from('profiles').select('role').eq('id', _session.user.id).single()
+          .then(({ data }) => {
+            if (data?.role === 'admin') {
+              toastMessage.value = "Sembah Sujud, Admin";
+            } else {
+              toastMessage.value = event === 'SIGNED_UP' 
+                ? "Akun berhasil dibuat! Selamat bergabung." 
+                : "Selamat datang kembali!";
+            }
+            showToast.value = true;
+          });
+      }
+    } else {
+      todos.value = [];
+    }
   });
 });
 
@@ -150,5 +172,13 @@ const handleLogout = async () => {
         </template>
       </TaskList>
     </div>
+
+    <!-- Notification Toast -->
+    <Toast 
+      v-if="showToast" 
+      :message="toastMessage" 
+      :duration="4000"
+      @close="showToast = false" 
+    />
   </div>
 </template>
