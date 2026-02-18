@@ -4,14 +4,14 @@
     <!-- Checkbox -->
     <input 
       type="checkbox" 
-      :checked="todo.done" 
+      :checked="todo.is_completed" 
       @change="toggleDone" 
       class="w-5 h-5" 
     />
 
-    <!-- Todo text -->
+    <!-- Todo title -->
     <span :class="todoClass">
-      {{ todo.text }}
+      {{ todo.title }}
     </span>
 
     <!-- Delete button -->
@@ -45,8 +45,8 @@ const props = defineProps({
     required: true,
     validator: (value) => {
       const valid = value.id &&
-                    typeof value.text === 'string' &&
-                    typeof value.done === 'boolean'
+                    typeof value.title === 'string' &&
+                    typeof value.is_completed === 'boolean'
       if (!valid) console.warn('Invalid todo prop:', value)
       return valid
     }
@@ -60,10 +60,10 @@ const toggleDone = () => {
   emit('toggle-task', props.todo.id)
 }
 
-// Computed class for todo text
+// Computed class for todo title
 const todoClass = computed(() => ({
   'flex-1': true,
-  'line-through text-gray-400': props.todo.done,
-  'text-gray-800': !props.todo.done
+  'line-through text-gray-400': props.todo.is_completed,
+  'text-gray-800': !props.todo.is_completed
 }))
 </script>
