@@ -59,6 +59,16 @@
   gap: 1rem;
 }
 
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-logo-icon {
+  color: var(--primary);
+}
+
 .logo-text {
   font-family: var(--font-primary);
   font-weight: 800;
@@ -69,11 +79,15 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradientFlow 4s ease-in-out infinite alternate;
+  display: inline-block;
 }
 
 .dark-mode .logo-text {
   background: linear-gradient(90deg, var(--school-bus-yellow) 0%, var(--white) 50%, var(--school-bus-yellow) 100%);
   background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .footer-tagline {
