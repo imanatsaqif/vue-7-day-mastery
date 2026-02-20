@@ -95,7 +95,6 @@ html, body {
 /* Scroll lock when menu is open */
 .no-scroll {
   overflow: hidden !important;
-  height: 100vh;
 }
 
 /* Layout */

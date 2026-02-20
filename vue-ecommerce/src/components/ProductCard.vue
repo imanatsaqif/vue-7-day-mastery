@@ -153,6 +153,7 @@ const navigateToDetail = () => {
   color: var(--text-main);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: color 0.2s;

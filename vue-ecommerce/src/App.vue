@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import Navbar from '@/components/Navbar.vue'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 import Footer from '@/components/Footer.vue'
+import BackToTop from '@/components/BackToTop.vue'
 import ToastNotification from '@/components/ToastNotification.vue'
 import { useThemeStore } from '@/stores/theme'
 
@@ -21,6 +22,7 @@ onMounted(() => {
       <router-view />
     </main>
     <Footer />
+    <BackToTop />
     <ToastNotification />
   </div>
 </template>
