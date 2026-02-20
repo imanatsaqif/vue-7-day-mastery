@@ -81,7 +81,7 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   font-family: var(--font-secondary);
   line-height: 1.6;
   color: var(--text-main);
@@ -89,6 +89,13 @@ body {
   background-attachment: fixed;
   transition: background 0.4s ease, color 0.4s ease;
   min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scroll from mobile menu */
+}
+
+/* Scroll lock when menu is open */
+.no-scroll {
+  overflow: hidden !important;
+  height: 100vh;
 }
 
 /* Layout */

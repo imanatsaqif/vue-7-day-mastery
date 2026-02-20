@@ -35,4 +35,10 @@ onMounted(() => {
 .main-content {
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 4rem;
+  }
+}
 </style>

@@ -20,6 +20,16 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
+// Watch for menu state to lock/unlock scroll
+import { watch } from 'vue'
+watch(isMenuOpen, (newVal) => {
+  if (newVal) {
+    document.body.classList.add('no-scroll')
+  } else {
+    document.body.classList.remove('no-scroll')
+  }
+})
+
 const handleLogout = () => {
   authStore.logout()
   closeMenu()
@@ -184,6 +194,14 @@ const handleLogout = () => {
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4rem;
+  }
+
   .hamburger {
     display: flex;
   }
@@ -194,18 +212,27 @@ const handleLogout = () => {
     left: 0;
     width: 100%;
     height: calc(100vh - 4rem);
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     flex-direction: column;
     padding: 2rem;
     gap: 2rem;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    visibility: hidden; /* Prevent interaction when closed */
+    transition: transform 0.3s ease-in-out, visibility 0.3s;
     box-shadow: var(--shadow-lg);
     z-index: 1000;
   }
 
+  .dark-mode .navbar-menu {
+    background: rgba(0, 8, 20, 0.92); /* Dark mode: reduced transparency from 0.7 to 0.92 */
+    border-left: 1px solid var(--border-color);
+  }
+
   .navbar-menu.is-open {
     transform: translateX(0);
+    visibility: visible;
   }
 
   .nav-link {
