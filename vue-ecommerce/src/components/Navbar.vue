@@ -4,6 +4,7 @@ import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 import { useRouter } from 'vue-router'
+import IconShop from '@/components/icons/IconShop.vue'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
@@ -12,6 +13,7 @@ const router = useRouter()
 
 const isMenuOpen = ref(false)
 
+// Menu toggle logic
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
@@ -19,19 +21,6 @@ const toggleMenu = () => {
 const closeMenu = () => {
   isMenuOpen.value = false
 }
-
-// Watch for menu state to lock/unlock scroll
-watch(isMenuOpen, (newVal) => {
-  const html = document.documentElement
-  const body = document.body
-  if (newVal) {
-    html.classList.add('no-scroll')
-    body.classList.add('no-scroll')
-  } else {
-    html.classList.remove('no-scroll')
-    body.classList.remove('no-scroll')
-  }
-})
 
 const handleLogout = () => {
   authStore.logout()
@@ -44,7 +33,7 @@ const handleLogout = () => {
   <nav class="navbar">
     <div class="container navbar-container">
       <router-link to="/" class="logo" @click="closeMenu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <IconShop class="logo-icon" />
         <span class="logo-text">VueShop</span>
       </router-link>
       
@@ -126,6 +115,8 @@ const handleLogout = () => {
 }
 
 .logo-icon {
+  width: 28px;
+  height: 28px;
   color: var(--primary);
 }
 
@@ -204,34 +195,32 @@ const handleLogout = () => {
   }
 
   .navbar-menu {
-    position: absolute; /* Relative to sticky header */
-    top: 100%; 
+    position: absolute;
+    top: 100%; /* Anchors right below the navbar */
     left: 0;
     width: 100%;
-    height: calc(100vh - 4rem);
-    background: rgba(255, 255, 255, 0.98);
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     flex-direction: column;
     padding: 2rem;
     gap: 2rem;
-    transform: translateY(-10px);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1);
+    transform: translateX(100%);
+    visibility: hidden; /* Prevent interaction when closed */
+    transition: transform 0.3s ease-in-out, visibility 0.3s;
+    box-shadow: var(--shadow-lg);
     z-index: 1000;
   }
 
-  .navbar-menu.is-open {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
+  .dark-mode .navbar-menu {
+    background: rgba(0, 8, 20, 0.92); /* Dark mode: reduced transparency from 0.7 to 0.92 */
+    border-left: 1px solid var(--border-color);
   }
 
-  .dark-mode .navbar-menu {
-    background: rgba(0, 8, 20, 0.98);
-    border-top: 1px solid var(--border-color);
+  .navbar-menu.is-open {
+    transform: translateX(0);
+    visibility: visible;
   }
 
   .nav-link {

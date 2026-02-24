@@ -16,6 +16,7 @@ const { products, categories, loading, error } = storeToRefs(productStore)
 const searchQuery = ref('')
 const selectedCategory = ref('all')
 const sortBy = ref('default')
+const mobileCols = ref(2) // Default to 2 columns on mobile
 
 const filteredProducts = computed(() => {
   let result = products.value.filter(product => {
@@ -86,6 +87,25 @@ onMounted(() => {
         </div>
 
         <div class="right-controls">
+          <div class="view-toggle mobile-only">
+            <button 
+              @click="mobileCols = 1" 
+              :class="{ active: mobileCols === 1 }"
+              class="toggle-btn"
+              title="Large View (1 Column)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+            </button>
+            <button 
+              @click="mobileCols = 2" 
+              :class="{ active: mobileCols === 2 }"
+              class="toggle-btn"
+              title="Grid View (2 Columns)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            </button>
+          </div>
+          
           <div class="search-wrapper">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input 
@@ -113,7 +133,7 @@ onMounted(() => {
       </div>
       
       <div v-else>
-        <div v-if="filteredProducts.length > 0" class="products-grid">
+        <div v-if="filteredProducts.length > 0" class="products-grid" :class="`mobile-grid-${mobileCols}`">
           <ProductCard
             v-for="product in filteredProducts"
             :key="product.id"
@@ -303,21 +323,155 @@ onMounted(() => {
   color: var(--ink-black);
 }
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .controls-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
+    gap: 1.5rem;
+  }
+
+  .left-controls {
+    order: 2; /* Filters below search */
+    justify-content: center;
+  }
+
+  .right-controls {
+    order: 1; /* Search on top */
+    justify-content: center;
+  }
+
+  .search-wrapper {
+    max-width: 600px; /* Wider for tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .left-controls {
+    flex-wrap: wrap;
+  }
+  
+  .select-wrapper {
+    flex: 1;
+    min-width: 160px;
   }
 }
 
 @media (max-width: 640px) {
+  .controls-row {
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
   .left-controls {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 0.5rem;
   }
+
   .select-wrapper {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
+
+  .custom-select {
+    padding-left: 0.75rem;
+    padding-right: 2rem;
+    font-size: 0.85rem;
+    background-position: right 0.5rem center;
+  }
+
+  .right-controls {
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .search-wrapper {
+    flex: 1;
+    max-width: none;
+  }
+
+  .search-input {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .view-toggle {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .toggle-btn {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+  }
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  padding: 0.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .mobile-only {
+    display: flex;
+  }
+  
+  .products-grid.mobile-grid-1 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .products-grid.mobile-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: rgba(0, 53, 102, 0.05);
+  color: var(--primary);
+}
+
+.toggle-btn.active {
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.dark-mode .toggle-btn.active {
+  background: var(--school-bus-yellow);
+  color: var(--ink-black);
+}
+
+.dark-mode .toggle-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Cleanup old styles */

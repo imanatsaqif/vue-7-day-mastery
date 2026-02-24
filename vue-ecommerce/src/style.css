@@ -95,9 +95,6 @@ html, body {
 /* Scroll lock when menu is open */
 .no-scroll {
   overflow: hidden !important;
-  height: 100% !important;
-  width: 100% !important;
-  position: fixed !important;
 }
 
 /* Layout */

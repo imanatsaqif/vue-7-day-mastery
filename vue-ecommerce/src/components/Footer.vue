@@ -1,8 +1,13 @@
+<script setup>
+import IconShop from '@/components/icons/IconShop.vue'
+</script>
+
 <template>
   <footer class="main-footer">
     <div class="container footer-content">
       <div class="footer-info">
         <div class="footer-logo">
+          <IconShop class="footer-logo-icon" />
           <span class="logo-text">VueShop</span>
         </div>
         <p class="footer-tagline">Building modern e-commerce experiences with Vue 3.</p>
@@ -88,6 +93,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-logo-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--primary);
 }
 
 .logo-text {

@@ -51,16 +51,20 @@ const navigateToDetail = () => {
     
     <div class="product-content">
       <h3 class="product-title">{{ product.title }}</h3>
-      <div class="product-rating">
-        <!-- Static rating for visual completeness if API doesn't provide rating in list view -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        <span>{{ product.rating?.rate || 4.5 }}</span> <span class="text-muted">({{ product.rating?.count || 10 }})</span>
+      
+      <div class="product-info-row">
+        <div class="product-rating">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="star-icon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <span class="rating-val">{{ product.rating?.rate || 4.5 }}</span>
+          <span class="text-muted rating-count">({{ product.rating?.count || 10 }})</span>
+        </div>
       </div>
       
       <div class="product-footer">
         <div class="product-price">${{ product.price.toFixed(2) }}</div>
-        <button @click.stop="$emit('add-to-cart', product)" class="btn btn-sm btn-icon" title="Add to Cart">
-          Add to Cart
+        <button @click.stop="$emit('add-to-cart', product)" class="add-cart-btn" aria-label="Add to Cart">
+          <span class="btn-text">Add to Cart</span>
+          <svg class="btn-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
       </div>
     </div>
@@ -77,6 +81,7 @@ const navigateToDetail = () => {
   flex-direction: column;
   height: 100%;
   cursor: pointer;
+  position: relative;
   
   /* Initial state for lazy reveal */
   opacity: 0;
@@ -94,7 +99,7 @@ const navigateToDetail = () => {
 }
 
 .product-card:hover {
-  transform: translateY(-4px) !important; /* Overrides reveal animation transform */
+  transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary);
 }
@@ -102,77 +107,91 @@ const navigateToDetail = () => {
 .product-image-container {
   position: relative;
   padding: 1.5rem;
-  background-color: white; /* Always white for product visibility */
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 220px;
-  border-bottom: 1px solid var(--border-color);
+  height: 200px;
+  margin: 0.5rem;
+  border-radius: var(--radius);
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .product-image-container {
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .product-image {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover .product-image {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .product-category {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: var(--ink-black);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  text-transform: capitalize;
-  box-shadow: var(--shadow-sm);
+  top: 0.75rem;
+  left: 0.75rem;
+  background: var(--bg-header);
+  color: var(--primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   backdrop-filter: blur(4px);
-  border: 1px solid var(--gray-200);
+  border: 1px solid var(--border-color);
+  z-index: 2;
 }
 
 .product-content {
-  padding: 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.75rem;
 }
 
 .product-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
   line-height: 1.4;
   color: var(--text-main);
+  /* Force precisely 2 lines of text height for alignment */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  height: 2.8em; 
   transition: color 0.2s;
 }
 
-.product-card:hover .product-title {
-  color: var(--primary);
+.product-info-row {
+  margin-bottom: 1rem;
 }
 
 .product-rating {
-  font-size: 0.875rem;
-  color: var(--school-bus-yellow);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--school-bus-yellow);
 }
 
-.text-muted {
-  color: var(--text-muted);
+.rating-val {
+  color: var(--text-main);
+}
+
+.rating-count {
+  font-weight: 400;
+  font-size: 0.8rem;
 }
 
 .product-footer {
@@ -180,35 +199,90 @@ const navigateToDetail = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 0.75rem;
+  gap: 1rem;
 }
 
 .product-price {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--text-main);
+  letter-spacing: -0.02em;
 }
 
-.btn-icon {
-  background-color: var(--regal-navy);
-  color: var(--white);
-  transition: background-color 0.2s ease;
+.add-cart-btn {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-.btn-icon:hover {
-  background-color: var(--prussian-blue);
-  color: var(--white);
+.btn-icon-svg {
+  display: block;
 }
 
-@media (prefers-color-scheme: dark) {
-  .btn-icon {
-    background-color: var(--gold);
-    color: var(--ink-black);
+.btn-text {
+  display: none; /* Hide text by default for compact view */
+}
+
+/* On larger screens or single column mobile, show text */
+@media (min-width: 480px) {
+  .add-cart-btn {
+    width: auto;
+    height: auto;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius);
   }
   
-  .btn-icon:hover {
-    background-color: var(--school-bus-yellow);
-    color: var(--ink-black);
+  .btn-text {
+    display: inline;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  
+  .btn-icon-svg {
+    display: none;
+  }
+}
+
+.add-cart-btn:hover {
+  background-color: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+.dark-mode .add-cart-btn {
+  background-color: var(--school-bus-yellow);
+  color: var(--ink-black);
+}
+
+.dark-mode .add-cart-btn:hover {
+  background-color: var(--gold);
+}
+
+@media (max-width: 640px) {
+  .product-image-container {
+    height: 160px;
+    padding: 1rem;
+  }
+  
+  .product-content {
+    padding: 0.85rem 1rem 1rem;
+  }
+
+  .product-title {
+    font-size: 0.85rem;
+    height: 2.8em;
+  }
+  
+  .product-price {
+    font-size: 1.1rem;
   }
 }
 </style>
