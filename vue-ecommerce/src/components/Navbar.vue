@@ -21,12 +21,15 @@ const closeMenu = () => {
 }
 
 // Watch for menu state to lock/unlock scroll
-import { watch } from 'vue'
 watch(isMenuOpen, (newVal) => {
+  const html = document.documentElement
+  const body = document.body
   if (newVal) {
-    document.body.classList.add('no-scroll')
+    html.classList.add('no-scroll')
+    body.classList.add('no-scroll')
   } else {
-    document.body.classList.remove('no-scroll')
+    html.classList.remove('no-scroll')
+    body.classList.remove('no-scroll')
   }
 })
 
@@ -83,9 +86,12 @@ const handleLogout = () => {
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
+  left: 0;
+  width: 100%;
   z-index: 100;
   transition: background 0.3s ease, border-color 0.3s ease;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 /* Semi-transparent background for glass effect */
@@ -131,16 +137,15 @@ const handleLogout = () => {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
   animation: gradientFlow 4s ease-in-out infinite alternate;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Explicit dark mode adjustment for manual switch */
 .dark-mode .logo-text {
-  background: linear-gradient(90deg, var(--school-bus-yellow) 0%, var(--white) 50%, var(--school-bus-yellow) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(90deg, var(--school-bus-yellow) 0%, var(--gold) 50%, var(--school-bus-yellow) 100%);
 }
 
 @keyframes gradientFlow {
@@ -194,45 +199,39 @@ const handleLogout = () => {
 }
 
 @media (max-width: 768px) {
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4rem;
-  }
-
   .hamburger {
     display: flex;
   }
 
   .navbar-menu {
-    position: fixed;
-    top: 4rem;
+    position: absolute; /* Relative to sticky header */
+    top: 100%; 
     left: 0;
     width: 100%;
     height: calc(100vh - 4rem);
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     flex-direction: column;
     padding: 2rem;
     gap: 2rem;
-    transform: translateX(100%);
-    visibility: hidden; /* Prevent interaction when closed */
-    transition: transform 0.3s ease-in-out, visibility 0.3s;
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 15px -10px rgba(0,0,0,0.1);
     z-index: 1000;
   }
 
-  .dark-mode .navbar-menu {
-    background: rgba(0, 8, 20, 0.92); /* Dark mode: reduced transparency from 0.7 to 0.92 */
-    border-left: 1px solid var(--border-color);
+  .navbar-menu.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
   }
 
-  .navbar-menu.is-open {
-    transform: translateX(0);
-    visibility: visible;
+  .dark-mode .navbar-menu {
+    background: rgba(0, 8, 20, 0.98);
+    border-top: 1px solid var(--border-color);
   }
 
   .nav-link {
