@@ -547,20 +547,58 @@ const handleCheckout = () => {
 
 @media (max-width: 640px) {
     .cart-item {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .item-visual {
+        width: 80px;
+        height: 80px;
+        padding: 0.5rem;
+    }
+    
+    .item-info {
+        text-align: left;
+    }
+
+    .title {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
     }
     
     .info-bottom {
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        gap: 1rem;
+        justify-content: space-between;
+        margin-top: 0.75rem;
+        width: 100%;
+    }
+
+    .total-line-price {
+        font-size: 1.1rem;
     }
     
     .controls-wrapper {
-        width: 100%;
-        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .quantity-controller {
+        padding: 0.15rem;
+    }
+
+    .qty-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+    }
+
+    .qty-number {
+        font-size: 0.85rem;
+        min-width: 18px;
+    }
+
+    .remove-action {
+        padding: 0.25rem;
     }
 }
 </style>
