@@ -14,8 +14,11 @@ const calculateTotal = () => {
 
 const handleCheckout = () => {
     if (!authStore.isAuthenticated) {
-        alert('Please login to checkout')
-        router.push('/login')
+        // Guest Flow: Redirect to login but keep current page path so user can return after auth
+        router.push({
+            path: '/login',
+            query: { redirect: '/cart' }
+        })
         return
     }
     
