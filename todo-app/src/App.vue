@@ -14,7 +14,14 @@ const allUsers = ref([]);
 const selectedUserFilter = ref("all");
 const showToast = ref(false);
 const toastMessage = ref("");
+const toastType = ref("success");
 const filter = ref("all");
+
+const triggerToast = (message, type = "success") => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+};
 
 /* [Belajar Reactive]
 const todos = reactive([]);
@@ -68,7 +75,7 @@ const addTodo = async (title) => {
     }])
     .select();
 
-  if (error) alert(error.message);
+  if (error) triggerToast(error.message, 'error');
   else todos.value.unshift(data[0]);
 };
 
@@ -84,7 +91,7 @@ const toggleTodo = async (id) => {
     .update({ is_completed: !todo.is_completed })
     .eq("id", id);
 
-  if (error) alert(error.message);
+  if (error) triggerToast(error.message, 'error');
   else todo.is_completed = !todo.is_completed;
 };
 
@@ -99,11 +106,27 @@ const deleteTodo = async (id) => {
     .delete()
     .eq("id", id);
 
-  if (error) alert(error.message);
+  if (error) triggerToast(error.message, 'error');
   else todos.value = todos.value.filter((t) => t.id !== id);
 };
 
+const isDark = ref(false);
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  }
+};
+
 onMounted(() => {
+  // Sync the theme switcher switch state with current HTML class
+  isDark.value = document.documentElement.classList.contains('dark');
+
   // Cek session saat awal load
   supabase.auth.getSession().then(({ data }) => {
     session.value = data.session;
@@ -124,10 +147,10 @@ onMounted(() => {
           fetchTodos();
 
           if (isLogin || event === 'SIGNED_UP') {
-            toastMessage.value = userRole.value === 'admin' 
+            const msg = userRole.value === 'admin' 
               ? "Sembah Sujud, Admin" 
               : (event === 'SIGNED_UP' ? "Akun berhasil dibuat!" : "Selamat datang kembali!");
-            showToast.value = true;
+            triggerToast(msg, 'success');
           }
         });
     } else {
@@ -145,8 +168,23 @@ const handleLogout = async () => {
 
 <template>
   <div
-    class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4 py-12 app-root"
+    class="min-h-screen w-full flex justify-center items-start sm:items-center px-4 sm:pt-0 pt-4 py-12 app-root relative"
   >
+    <!-- Floating Theme Switcher Button -->
+    <button 
+      @click="toggleTheme" 
+      class="fixed top-6 right-6 p-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 z-50 text-[var(--color-text)] cursor-pointer"
+      aria-label="Toggle Theme"
+    >
+      <!-- Sun Icon (shows in Dark Mode) -->
+      <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+      </svg>
+      <!-- Moon Icon (shows in Light Mode) -->
+      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+    </button>
     <Auth v-if="!session" />
     <div
       v-else
@@ -197,6 +235,7 @@ const handleLogout = async () => {
     <Toast 
       v-if="showToast" 
       :message="toastMessage" 
+      :type="toastType"
       :duration="4000"
       @close="showToast = false" 
     />

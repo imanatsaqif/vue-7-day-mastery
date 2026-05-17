@@ -65,7 +65,7 @@ const selectedUserName = () => {
                 >
                     All Authors (Everyone)
                 </button>
-                <div class="border-t border-gray-50"></div>
+                <div class="border-t border-[var(--color-border)]"></div>
                 <button 
                     v-for="u in users" 
                     :key="u.id" 
